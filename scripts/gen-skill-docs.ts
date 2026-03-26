@@ -31,38 +31,9 @@ const HOST: Host = (() => {
   const val = HOST_ARG.includes('=') ? HOST_ARG.split('=')[1] : process.argv[process.argv.indexOf(HOST_ARG) + 1];
   if (val === 'codex' || val === 'agents') return 'codex';
   if (val === 'claude') return 'claude';
-  throw new Error(`Unknown host: ${val}. Use claude, codex, or agents.`);
+  if (val === 'opencode') return 'opencode';
+  throw new Error(`Unknown host: ${val}. Use claude, codex, agents, or opencode.`);
 })();
-
-interface HostPaths {
-  skillRoot: string;
-  localSkillRoot: string;
-  binDir: string;
-  browseDir: string;
-}
-
-const HOST_PATHS: Record<Host, HostPaths> = {
-  claude: {
-    skillRoot: '~/.claude/skills/gstack',
-    localSkillRoot: '.claude/skills/gstack',
-    binDir: '~/.claude/skills/gstack/bin',
-    browseDir: '~/.claude/skills/gstack/browse/dist',
-  },
-  codex: {
-    skillRoot: '$GSTACK_ROOT',
-    localSkillRoot: '.agents/skills/gstack',
-    binDir: '$GSTACK_BIN',
-    browseDir: '$GSTACK_BROWSE',
-  },
-};
-
-interface TemplateContext {
-  skillName: string;
-  tmplPath: string;
-  benefitsFrom?: string[];
-  host: Host;
-  paths: HostPaths;
-}
 
 // ─── Shared Design Constants ────────────────────────────────
 
