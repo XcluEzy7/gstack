@@ -239,8 +239,7 @@ If none was produced (user may have cancelled), proceed with standard review.`;
 }
 
 export function generateCodexSecondOpinion(ctx: TemplateContext): string {
-  // Codex host: strip entirely — Codex should never invoke itself
-  if (ctx.host === 'codex') return '';
+  if (ctx.host === 'codex' || ctx.host === 'opencode') return '';
 
   return `## Phase 3.5: Cross-Model Second Opinion (optional)
 
@@ -326,8 +325,7 @@ If A: revise the premise and note the revision. If B: proceed (and note that the
 }
 
 export function generateAdversarialStep(ctx: TemplateContext): string {
-  // Codex host: strip entirely — Codex should never invoke itself
-  if (ctx.host === 'codex') return '';
+  if (ctx.host === 'codex' || ctx.host === 'opencode') return '';
 
   const isShip = ctx.skillName === 'ship';
   const stepNum = isShip ? '3.8' : '5.7';
@@ -470,8 +468,7 @@ High-confidence findings (agreed on by multiple sources) should be prioritized f
 }
 
 export function generateCodexPlanReview(ctx: TemplateContext): string {
-  // Codex host: strip entirely — Codex should never invoke itself
-  if (ctx.host === 'codex') return '';
+  if (ctx.host === 'codex' || ctx.host === 'opencode') return '';
 
   return `## Outside Voice — Independent Plan Challenge (optional, recommended)
 

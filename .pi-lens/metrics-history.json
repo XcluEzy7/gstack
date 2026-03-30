@@ -1,0 +1,69 @@
+{
+  "version": 1,
+  "files": {
+    ".gsd/extensions/gsd-shape/index.ts": {
+      "latest": {
+        "commit": "45ba0cd",
+        "timestamp": "2026-03-30T13:52:56.378Z",
+        "mi": 65.6,
+        "cognitive": 0,
+        "nesting": 1,
+        "lines": 17
+      },
+      "history": [
+        {
+          "commit": "45ba0cd",
+          "timestamp": "2026-03-30T13:52:56.378Z",
+          "mi": 65.6,
+          "cognitive": 0,
+          "nesting": 1,
+          "lines": 17
+        }
+      ],
+      "trend": "stable"
+    },
+    ".gsd/extensions/gsd-shape/context.ts": {
+      "latest": {
+        "commit": "45ba0cd",
+        "timestamp": "2026-03-30T13:53:15.376Z",
+        "mi": 16.1,
+        "cognitive": 88,
+        "nesting": 4,
+        "lines": 404
+      },
+      "history": [
+        {
+          "commit": "45ba0cd",
+          "timestamp": "2026-03-30T13:53:15.376Z",
+          "mi": 16.1,
+          "cognitive": 88,
+          "nesting": 4,
+          "lines": 404
+        }
+      ],
+      "trend": "stable"
+    },
+    "test/gsd-shape-context.test.ts": {
+      "latest": {
+        "commit": "45ba0cd",
+        "timestamp": "2026-03-30T13:54:24.262Z",
+        "mi": 23.5,
+        "cognitive": 26,
+        "nesting": 3,
+        "lines": 218
+      },
+      "history": [
+        {
+          "commit": "45ba0cd",
+          "timestamp": "2026-03-30T13:54:24.262Z",
+          "mi": 23.5,
+          "cognitive": 26,
+          "nesting": 3,
+          "lines": 218
+        }
+      ],
+      "trend": "stable"
+    }
+  },
+  "capturedAt": "2026-03-30T13:54:32.047Z"
+}

@@ -14,13 +14,14 @@ import { SNAPSHOT_FLAGS } from '../browse/src/snapshot';
 import { discoverTemplates } from './discover-skills';
 import * as fs from 'fs';
 import * as path from 'path';
+import { fileURLToPath } from 'url';
 import type { Host, TemplateContext } from './resolvers/types';
 import { HOST_PATHS } from './resolvers/types';
 import { RESOLVERS } from './resolvers/index';
 import { codexSkillName, transformFrontmatter, extractHookSafetyProse, extractNameAndDescription, condenseOpenAIShortDescription, generateOpenAIYaml } from './resolvers/codex-helpers';
 import { generatePlanCompletionAuditShip, generatePlanCompletionAuditReview, generatePlanVerificationExec } from './resolvers/review';
 
-const ROOT = path.resolve(import.meta.dir, '..');
+const ROOT = path.dirname(fileURLToPath(import.meta.url));
 const DRY_RUN = process.argv.includes('--dry-run');
 
 // ─── Host Detection ─────────────────────────────────────────
@@ -151,10 +152,12 @@ function generateSnapshotFlags(_ctx: TemplateContext): string {
 }
 
 function generatePreambleBash(ctx: TemplateContext): string {
-  const runtimeRoot = ctx.host === 'codex'
+  // For codex/opencode hosts, set up runtime root override
+  const needsRuntimeRoot = ctx.host === 'codex' || ctx.host === 'opencode';
+  const runtimeRoot = needsRuntimeRoot
     ? `_ROOT=$(git rev-parse --show-toplevel 2>/dev/null)
-GSTACK_ROOT="$HOME/.codex/skills/gstack"
-[ -n "$_ROOT" ] && [ -d "$_ROOT/.agents/skills/gstack" ] && GSTACK_ROOT="$_ROOT/.agents/skills/gstack"
+GSTACK_ROOT="${ctx.paths.skillRoot.replace(/^~/, '$HOME')}"
+[ -n "$_ROOT" ] && [ -d "$_ROOT/${ctx.paths.localSkillRoot}" ] && GSTACK_ROOT="$_ROOT/${ctx.paths.localSkillRoot}"
 GSTACK_BIN="$GSTACK_ROOT/bin"
 GSTACK_BROWSE="$GSTACK_ROOT/browse/dist"
 `
@@ -2876,7 +2879,7 @@ policy:
 }
 
 /**
- * Transform frontmatter for Codex: keep only name + description.
+ * Transform frontmatter for non-Claude hosts: keep only name + description.
  * Strips allowed-tools, hooks, version, and all other fields.
  * Handles multiline block scalar descriptions (YAML | syntax).
  */
@@ -2887,22 +2890,21 @@ function transformFrontmatter(content: string, host: Host): string {
   if (fmStart !== 0) return content;
   const fmEnd = content.indexOf('\n---', fmStart + 4);
   if (fmEnd === -1) return content;
-  const body = content.slice(fmEnd + 4); // includes the leading \n after ---
+  const body = content.slice(fmEnd + 4);
   const { name, description } = extractNameAndDescription(content);
 
-  // Codex 1024-char description limit — fail build, don't ship broken skills
+  const hostName = host === 'codex' ? 'Codex' : 'OpenCode';
   const MAX_DESC = 1024;
   if (description.length > MAX_DESC) {
     throw new Error(
-      `Codex description for "${name}" is ${description.length} chars (max ${MAX_DESC}). ` +
+      `${hostName} description for "${name}" is ${description.length} chars (max ${MAX_DESC}). ` +
       `Compress the description in the .tmpl file.`
     );
   }
 
-  // Re-emit Codex frontmatter (name + description only)
   const indentedDesc = description.split('\n').map(l => `  ${l}`).join('\n');
-  const codexFm = `---\nname: ${name}\ndescription: |\n${indentedDesc}\n---`;
-  return codexFm + body;
+  const newFm = `---\nname: ${name}\ndescription: |\n${indentedDesc}\n---`;
+  return newFm + body;
 }
 
 /**
@@ -2950,10 +2952,11 @@ function processTemplate(tmplPath: string, host: Host = 'claude'): { outputPath:
 
   let outputDir: string | null = null;
 
-  // For codex host, route output to .agents/skills/{codexSkillName}/SKILL.md
-  if (host === 'codex') {
-    const codexName = codexSkillName(skillDir === '.' ? '' : skillDir);
-    outputDir = path.join(ROOT, '.agents', 'skills', codexName);
+  // For non-Claude hosts, route output to appropriate directory
+  if (host === 'codex' || host === 'opencode') {
+    const skillName = codexSkillName(skillDir === '.' ? '' : skillDir);
+    const hostDir = host === 'codex' ? '.agents' : '.opencode';
+    outputDir = path.join(ROOT, hostDir, 'skills', skillName);
     fs.mkdirSync(outputDir, { recursive: true });
     outputPath = path.join(outputDir, 'SKILL.md');
   }
@@ -2987,31 +2990,29 @@ function processTemplate(tmplPath: string, host: Host = 'claude'): { outputPath:
     throw new Error(`Unresolved placeholders in ${relTmplPath}: ${remaining.join(', ')}`);
   }
 
-  // For codex host: transform frontmatter and replace Claude-specific paths
-  if (host === 'codex') {
-    // Extract hook safety prose BEFORE transforming frontmatter (which strips hooks)
+  // For non-Claude hosts: transform frontmatter and replace Claude-specific paths
+  if (host === 'codex' || host === 'opencode') {
     const safetyProse = extractHookSafetyProse(tmplContent);
 
-    // Transform frontmatter: keep only name + description
     content = transformFrontmatter(content, host);
 
-    // Insert safety advisory at the top of the body (after frontmatter)
     if (safetyProse) {
       const bodyStart = content.indexOf('\n---') + 4;
       content = content.slice(0, bodyStart) + '\n' + safetyProse + '\n' + content.slice(bodyStart);
     }
 
-    // Replace remaining hardcoded Claude paths with host-appropriate paths
     content = content.replace(/~\/\.claude\/skills\/gstack/g, ctx.paths.skillRoot);
     content = content.replace(/\.claude\/skills\/gstack/g, ctx.paths.localSkillRoot);
-    content = content.replace(/\.claude\/skills\/review/g, '.agents/skills/gstack/review');
-    content = content.replace(/\.claude\/skills/g, '.agents/skills');
+
+    const hostSkillsPath = host === 'opencode' ? '.opencode/skills/gstack' : '.agents/skills/gstack';
+    content = content.replace(/\.claude\/skills\/review/g, `${hostSkillsPath}/review`);
+    content = content.replace(/\.claude\/skills/g, host === 'opencode' ? '.opencode/skills' : '.agents/skills');
 
     if (outputDir) {
-      const codexName = codexSkillName(skillDir === '.' ? '' : skillDir);
+      const skillName = codexSkillName(skillDir === '.' ? '' : skillDir);
       const agentsDir = path.join(outputDir, 'agents');
       fs.mkdirSync(agentsDir, { recursive: true });
-      const displayName = codexName;
+      const displayName = skillName;
       const shortDescription = condenseOpenAIShortDescription(extractedDescription);
       fs.writeFileSync(path.join(agentsDir, 'openai.yaml'), generateOpenAIYaml(displayName, shortDescription));
     }
@@ -3040,8 +3041,8 @@ let hasChanges = false;
 const tokenBudget: Array<{ skill: string; lines: number; tokens: number }> = [];
 
 for (const tmplPath of findTemplates()) {
-  // Skip /codex skill for codex host (self-referential — it's a Claude wrapper around codex exec)
-  if (HOST === 'codex') {
+  // Skip /codex skill for non-Claude hosts (self-referential — it's a Claude wrapper around codex exec)
+  if (HOST !== 'claude') {
     const dir = path.basename(path.dirname(tmplPath));
     if (dir === 'codex') continue;
   }
@@ -3079,11 +3080,13 @@ if (!DRY_RUN && tokenBudget.length > 0) {
   const totalLines = tokenBudget.reduce((s, t) => s + t.lines, 0);
   const totalTokens = tokenBudget.reduce((s, t) => s + t.tokens, 0);
 
+  const skillsPrefix = HOST === 'opencode' ? '.opencode/skills/' : '.agents/skills/';
+
   console.log('');
   console.log(`Token Budget (${HOST} host)`);
   console.log('═'.repeat(60));
   for (const t of tokenBudget) {
-    const name = t.skill.replace(/\/SKILL\.md$/, '').replace(/^\.agents\/skills\//, '');
+    const name = t.skill.replace(/\/SKILL\.md$/, '').replace(new RegExp(`^${skillsPrefix.replace(/\./g, '\\.')}`), '');
     console.log(`  ${name.padEnd(30)} ${String(t.lines).padStart(5)} lines  ~${String(t.tokens).padStart(6)} tokens`);
   }
   console.log('─'.repeat(60));

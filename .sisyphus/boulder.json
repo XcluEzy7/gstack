@@ -1,0 +1,33 @@
+{
+  "active_plan": "/home/egsox/repo/gstack/.sisyphus/plans/opencode-only-port.md",
+  "started_at": "2026-03-26T05:49:13.069Z",
+  "session_ids": [
+    "ses_2d762f03fffeZklnS3ZqA5pANP",
+    "ses_2d74cd1aaffe1y2VmIggkxXdYG",
+    "ses_2d723a5f7ffedJ6CVQA8omZ2qd",
+    "ses_2d7203231ffeQMrHUVDAE9Heuw",
+    "ses_2d71d6590ffesjoied38ix5jae"
+  ],
+  "plan_name": "opencode-only-port",
+  "agent": "atlas",
+  "task_sessions": {
+    "todo:1": {
+      "task_key": "todo:1",
+      "task_label": "1",
+      "task_title": "Define the OpenCode host capability contract",
+      "session_id": "ses_2d7203231ffeQMrHUVDAE9Heuw",
+      "agent": "Sisyphus-Junior",
+      "category": "quick",
+      "updated_at": "2026-03-26T06:41:23.906Z"
+    },
+    "todo:2": {
+      "task_key": "todo:2",
+      "task_label": "2",
+      "task_title": "Refactor generator host handling to emit OpenCode artifacts from the shared template tree",
+      "session_id": "ses_2d71d6590ffesjoied38ix5jae",
+      "agent": "Sisyphus-Junior",
+      "category": "unspecified-high",
+      "updated_at": "2026-03-26T06:56:59.625Z"
+    }
+  }
+}

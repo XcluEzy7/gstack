@@ -69,35 +69,33 @@ export function codexSkillName(skillDir: string): string {
 }
 
 /**
- * Transform frontmatter for Codex: keep only name + description.
+ * Transform frontmatter for non-Claude hosts: keep only name + description.
  * Strips allowed-tools, hooks, version, and all other fields.
  * Handles multiline block scalar descriptions (YAML | syntax).
  */
 export function transformFrontmatter(content: string, host: Host): string {
   if (host === 'claude') return content;
 
-  // Find frontmatter boundaries
   const fmStart = content.indexOf('---\n');
-  if (fmStart !== 0) return content; // frontmatter must be at the start
+  if (fmStart !== 0) return content;
   const fmEnd = content.indexOf('\n---', fmStart + 4);
   if (fmEnd === -1) return content;
 
-  const body = content.slice(fmEnd + 4); // includes the leading \n after ---
+  const body = content.slice(fmEnd + 4);
   const { name, description } = extractNameAndDescription(content);
 
-  // Codex 1024-char description limit — fail build, don't ship broken skills
+  const hostName = host === 'codex' ? 'Codex' : 'OpenCode';
   const MAX_DESC = 1024;
   if (description.length > MAX_DESC) {
     throw new Error(
-      `Codex description for "${name}" is ${description.length} chars (max ${MAX_DESC}). ` +
+      `${hostName} description for "${name}" is ${description.length} chars (max ${MAX_DESC}). ` +
       `Compress the description in the .tmpl file.`
     );
   }
 
-  // Re-emit Codex frontmatter (name + description only)
   const indentedDesc = description.split('\n').map(l => `  ${l}`).join('\n');
-  const codexFm = `---\nname: ${name}\ndescription: |\n${indentedDesc}\n---`;
-  return codexFm + body;
+  const newFm = `---\nname: ${name}\ndescription: |\n${indentedDesc}\n---`;
+  return newFm + body;
 }
 
 /**
