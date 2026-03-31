@@ -63,7 +63,28 @@
         }
       ],
       "trend": "stable"
+    },
+    ".gsd/extensions/gsd-shape/types.ts": {
+      "latest": {
+        "commit": "unknown",
+        "timestamp": "2026-03-31T13:14:41.828Z",
+        "mi": 39.1,
+        "cognitive": 0,
+        "nesting": 0,
+        "lines": 78
+      },
+      "history": [
+        {
+          "commit": "unknown",
+          "timestamp": "2026-03-31T13:14:41.828Z",
+          "mi": 39.1,
+          "cognitive": 0,
+          "nesting": 0,
+          "lines": 78
+        }
+      ],
+      "trend": "stable"
     }
   },
-  "capturedAt": "2026-03-30T13:54:32.047Z"
+  "capturedAt": "2026-03-31T13:14:46.830Z"
 }

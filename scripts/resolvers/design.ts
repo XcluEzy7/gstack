@@ -1,10 +1,12 @@
 import type { TemplateContext } from './types';
+import { HOST_CAPABILITIES } from './types';
 import { AI_SLOP_BLACKLIST, OPENAI_HARD_REJECTIONS, OPENAI_LITMUS_CHECKS } from './constants';
 
 export function generateDesignReviewLite(ctx: TemplateContext): string {
   const litmusList = OPENAI_LITMUS_CHECKS.map((item, i) => `${i + 1}. ${item}`).join(' ');
   const rejectionList = OPENAI_HARD_REJECTIONS.map((item, i) => `${i + 1}. ${item}`).join('\n');
-  const codexBlock = ctx.host === 'codex' || ctx.host === 'opencode' ? '' : `
+  const caps = HOST_CAPABILITIES[ctx.host];
+  const codexBlock = caps.includesCodexCliBlock ? '' : `
 
 7. **Codex design voice** (optional, automatic if available):
 
@@ -478,7 +480,8 @@ Error handling: all non-blocking. On failure, skip and continue.`;
 }
 
 export function generateDesignOutsideVoices(ctx: TemplateContext): string {
-  if (ctx.host === 'codex' || ctx.host === 'opencode') return '';
+  const caps = HOST_CAPABILITIES[ctx.host];
+  if (!caps.includesCodexCliBlock) return '';
 
   const rejectionList = OPENAI_HARD_REJECTIONS.map((item, i) => `${i + 1}. ${item}`).join('\n');
   const litmusList = OPENAI_LITMUS_CHECKS.map((item, i) => `${i + 1}. ${item}`).join('\n');

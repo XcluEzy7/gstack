@@ -1,0 +1,328 @@
+{
+  "success": true,
+  "issues": [
+    {
+      "type": "file",
+      "name": "browse/src/bun-polyfill.cjs",
+      "file": "browse/src/bun-polyfill.cjs"
+    },
+    {
+      "type": "file",
+      "name": "supabase/functions/community-pulse/index.ts",
+      "file": "supabase/functions/community-pulse/index.ts"
+    },
+    {
+      "type": "file",
+      "name": "supabase/functions/update-check/index.ts",
+      "file": "supabase/functions/update-check/index.ts"
+    },
+    {
+      "type": "file",
+      "name": "supabase/functions/telemetry-ingest/index.ts",
+      "file": "supabase/functions/telemetry-ingest/index.ts"
+    },
+    {
+      "type": "export",
+      "name": "OPENCODE_DISCOVERY_CONTRACT",
+      "file": "scripts/resolvers/types.ts",
+      "line": 63
+    },
+    {
+      "type": "export",
+      "name": "DiscoveryContract",
+      "file": "scripts/resolvers/types.ts",
+      "line": 45
+    },
+    {
+      "type": "export",
+      "name": "HostCapabilities",
+      "file": "scripts/resolvers/types.ts",
+      "line": 78
+    },
+    {
+      "type": "export",
+      "name": "testIfSelected",
+      "file": "test/helpers/e2e-helpers.ts",
+      "line": 228
+    },
+    {
+      "type": "export",
+      "name": "getWorktreeManager",
+      "file": "test/helpers/e2e-helpers.ts",
+      "line": 243
+    },
+    {
+      "type": "export",
+      "name": "describeWithWorktree",
+      "file": "test/helpers/e2e-helpers.ts",
+      "line": 278
+    },
+    {
+      "type": "export",
+      "name": "judgePassed",
+      "file": "test/helpers/e2e-helpers.ts",
+      "line": 291
+    },
+    {
+      "type": "export",
+      "name": "EvalCollector",
+      "file": "test/helpers/e2e-helpers.ts",
+      "line": 292
+    },
+    {
+      "type": "export",
+      "name": "EvalTestEntry",
+      "file": "test/helpers/e2e-helpers.ts",
+      "line": 293
+    },
+    {
+      "type": "export",
+      "name": "HarvestResult",
+      "file": "test/helpers/e2e-helpers.ts",
+      "line": 294
+    },
+    {
+      "type": "export",
+      "name": "codexErrorHandling",
+      "file": "scripts/resolvers/constants.ts",
+      "line": 44
+    },
+    {
+      "type": "export",
+      "name": "BrowseCommand",
+      "file": "test/helpers/skill-parser.ts",
+      "line": 18
+    },
+    {
+      "type": "export",
+      "name": "ValidationResult",
+      "file": "test/helpers/skill-parser.ts",
+      "line": 25
+    },
+    {
+      "type": "export",
+      "name": "BrowseConfig",
+      "file": "browse/src/config.ts",
+      "line": 16
+    },
+    {
+      "type": "export",
+      "name": "ParsedCodexJSONL",
+      "file": "test/helpers/codex-session-runner.ts",
+      "line": 35
+    },
+    {
+      "type": "export",
+      "name": "ParsedGeminiJSONL",
+      "file": "test/helpers/gemini-session-runner.ts",
+      "line": 32
+    },
+    {
+      "type": "export",
+      "name": "ParsedNDJSON",
+      "file": "test/helpers/session-runner.ts",
+      "line": 64
+    },
+    {
+      "type": "export",
+      "name": "OutcomeJudgeResult",
+      "file": "test/helpers/llm-judge.ts",
+      "line": 19
+    },
+    {
+      "type": "export",
+      "name": "WorktreeInfo",
+      "file": "lib/worktree.ts",
+      "line": 20
+    },
+    {
+      "type": "export",
+      "name": "BrowserInfo",
+      "file": "browse/src/cookie-import-browser.ts",
+      "line": 46
+    },
+    {
+      "type": "export",
+      "name": "ProfileEntry",
+      "file": "browse/src/cookie-import-browser.ts",
+      "line": 55
+    },
+    {
+      "type": "export",
+      "name": "DomainEntry",
+      "file": "browse/src/cookie-import-browser.ts",
+      "line": 60
+    },
+    {
+      "type": "export",
+      "name": "ImportResult",
+      "file": "browse/src/cookie-import-browser.ts",
+      "line": 65
+    }
+  ],
+  "unusedExports": [
+    {
+      "type": "export",
+      "name": "OPENCODE_DISCOVERY_CONTRACT",
+      "file": "scripts/resolvers/types.ts",
+      "line": 63
+    },
+    {
+      "type": "export",
+      "name": "DiscoveryContract",
+      "file": "scripts/resolvers/types.ts",
+      "line": 45
+    },
+    {
+      "type": "export",
+      "name": "HostCapabilities",
+      "file": "scripts/resolvers/types.ts",
+      "line": 78
+    },
+    {
+      "type": "export",
+      "name": "testIfSelected",
+      "file": "test/helpers/e2e-helpers.ts",
+      "line": 228
+    },
+    {
+      "type": "export",
+      "name": "getWorktreeManager",
+      "file": "test/helpers/e2e-helpers.ts",
+      "line": 243
+    },
+    {
+      "type": "export",
+      "name": "describeWithWorktree",
+      "file": "test/helpers/e2e-helpers.ts",
+      "line": 278
+    },
+    {
+      "type": "export",
+      "name": "judgePassed",
+      "file": "test/helpers/e2e-helpers.ts",
+      "line": 291
+    },
+    {
+      "type": "export",
+      "name": "EvalCollector",
+      "file": "test/helpers/e2e-helpers.ts",
+      "line": 292
+    },
+    {
+      "type": "export",
+      "name": "EvalTestEntry",
+      "file": "test/helpers/e2e-helpers.ts",
+      "line": 293
+    },
+    {
+      "type": "export",
+      "name": "HarvestResult",
+      "file": "test/helpers/e2e-helpers.ts",
+      "line": 294
+    },
+    {
+      "type": "export",
+      "name": "codexErrorHandling",
+      "file": "scripts/resolvers/constants.ts",
+      "line": 44
+    },
+    {
+      "type": "export",
+      "name": "BrowseCommand",
+      "file": "test/helpers/skill-parser.ts",
+      "line": 18
+    },
+    {
+      "type": "export",
+      "name": "ValidationResult",
+      "file": "test/helpers/skill-parser.ts",
+      "line": 25
+    },
+    {
+      "type": "export",
+      "name": "BrowseConfig",
+      "file": "browse/src/config.ts",
+      "line": 16
+    },
+    {
+      "type": "export",
+      "name": "ParsedCodexJSONL",
+      "file": "test/helpers/codex-session-runner.ts",
+      "line": 35
+    },
+    {
+      "type": "export",
+      "name": "ParsedGeminiJSONL",
+      "file": "test/helpers/gemini-session-runner.ts",
+      "line": 32
+    },
+    {
+      "type": "export",
+      "name": "ParsedNDJSON",
+      "file": "test/helpers/session-runner.ts",
+      "line": 64
+    },
+    {
+      "type": "export",
+      "name": "OutcomeJudgeResult",
+      "file": "test/helpers/llm-judge.ts",
+      "line": 19
+    },
+    {
+      "type": "export",
+      "name": "WorktreeInfo",
+      "file": "lib/worktree.ts",
+      "line": 20
+    },
+    {
+      "type": "export",
+      "name": "BrowserInfo",
+      "file": "browse/src/cookie-import-browser.ts",
+      "line": 46
+    },
+    {
+      "type": "export",
+      "name": "ProfileEntry",
+      "file": "browse/src/cookie-import-browser.ts",
+      "line": 55
+    },
+    {
+      "type": "export",
+      "name": "DomainEntry",
+      "file": "browse/src/cookie-import-browser.ts",
+      "line": 60
+    },
+    {
+      "type": "export",
+      "name": "ImportResult",
+      "file": "browse/src/cookie-import-browser.ts",
+      "line": 65
+    }
+  ],
+  "unusedFiles": [
+    {
+      "type": "file",
+      "name": "browse/src/bun-polyfill.cjs",
+      "file": "browse/src/bun-polyfill.cjs"
+    },
+    {
+      "type": "file",
+      "name": "supabase/functions/community-pulse/index.ts",
+      "file": "supabase/functions/community-pulse/index.ts"
+    },
+    {
+      "type": "file",
+      "name": "supabase/functions/update-check/index.ts",
+      "file": "supabase/functions/update-check/index.ts"
+    },
+    {
+      "type": "file",
+      "name": "supabase/functions/telemetry-ingest/index.ts",
+      "file": "supabase/functions/telemetry-ingest/index.ts"
+    }
+  ],
+  "unusedDeps": [],
+  "unlistedDeps": [],
+  "summary": "Found 27 issues"
+}

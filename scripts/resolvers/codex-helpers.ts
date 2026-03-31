@@ -1,4 +1,5 @@
 import type { Host } from './types';
+import { HOST_CAPABILITIES } from './types';
 
 const OPENAI_SHORT_DESCRIPTION_LIMIT = 120;
 
@@ -73,8 +74,9 @@ export function codexSkillName(skillDir: string): string {
  * Strips allowed-tools, hooks, version, and all other fields.
  * Handles multiline block scalar descriptions (YAML | syntax).
  */
-export function transformFrontmatter(content: string, host: Host): string {
-  if (host === 'claude') return content;
+export function transformFrontmatter(content: string, host: Host, displayName: string): string {
+  const caps = HOST_CAPABILITIES[host];
+  if (!caps.generatesOpenAIYaml) return content;
 
   const fmStart = content.indexOf('---\n');
   if (fmStart !== 0) return content;
@@ -84,11 +86,10 @@ export function transformFrontmatter(content: string, host: Host): string {
   const body = content.slice(fmEnd + 4);
   const { name, description } = extractNameAndDescription(content);
 
-  const hostName = host === 'codex' ? 'Codex' : 'OpenCode';
   const MAX_DESC = 1024;
   if (description.length > MAX_DESC) {
     throw new Error(
-      `${hostName} description for "${name}" is ${description.length} chars (max ${MAX_DESC}). ` +
+      `${displayName} description for "${name}" is ${description.length} chars (max ${MAX_DESC}). ` +
       `Compress the description in the .tmpl file.`
     );
   }

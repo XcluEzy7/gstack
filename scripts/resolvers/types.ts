@@ -68,3 +68,74 @@ export const OPENCODE_DISCOVERY_CONTRACT: DiscoveryContract = {
     '~/.config/opencode/skills/',  // User-global
   ],
 };
+
+// ─── Host Capabilities ─────────────────────────────────────────────────────
+
+/**
+ * Host-specific capabilities derived from the canonical contract.
+ * Generator code queries these capabilities instead of using `host === 'X'` conditionals.
+ */
+export interface HostCapabilities {
+  /** The host this contract applies to */
+  host: Host;
+  /** Human-readable name for error messages */
+  displayName: string;
+  /** Uses runtime root override (GSTACK_ROOT env vars for codex, local path resolution for opencode) */
+  usesRuntimeRoot: boolean;
+  /** Skill directory naming: 'gstack-skill' for codex/opencode, raw name for Claude */
+  prefixesSkillName: boolean;
+  /** Generates OpenAI YAML for codex/opencode (Claude uses native frontmatter) */
+  generatesOpenAIYaml: boolean;
+  /** Includes Codex CLI integration blocks (Claude and Open Code can call Codex, Codex cannot call itself) */
+  includesCodexCliBlock: boolean;
+  /** Skill directories: where skill README/SKILL.md files are written */
+  skillDir: {
+    /** The root skills directory for this host (e.g., '.agents/skills', '.opencode/skills') */
+    root: string;
+    /** The full path to the gstack skills directory */
+    gstackPath: string;
+  };
+}
+
+/**
+ * Host capabilities derived from the canonical types.
+ * Each host defines its behavior contract once, and generator code queries this map.
+ */
+export const HOST_CAPABILITIES: Record<Host, HostCapabilities> = {
+  claude: {
+    host: 'claude',
+    displayName: 'Claude',
+    usesRuntimeRoot: false,
+    prefixesSkillName: false,
+    generatesOpenAIYaml: false,
+    includesCodexCliBlock: true,
+    skillDir: {
+      root: '.claude/skills',
+      gstackPath: '.claude/skills/gstack',
+    },
+  },
+  codex: {
+    host: 'codex',
+    displayName: 'Codex',
+    usesRuntimeRoot: true,
+    prefixesSkillName: true,
+    generatesOpenAIYaml: true,
+    includesCodexCliBlock: false,
+    skillDir: {
+      root: '.agents/skills',
+      gstackPath: '.agents/skills/gstack',
+    },
+  },
+  opencode: {
+    host: 'opencode',
+    displayName: 'OpenCode',
+    usesRuntimeRoot: true,
+    prefixesSkillName: true,
+    generatesOpenAIYaml: true,
+    includesCodexCliBlock: true,
+    skillDir: {
+      root: '.opencode/skills',
+      gstackPath: '.opencode/skills/gstack',
+    },
+  },
+};

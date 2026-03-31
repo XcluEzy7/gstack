@@ -16,7 +16,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
 import type { Host, TemplateContext } from './resolvers/types';
-import { HOST_PATHS } from './resolvers/types';
+import { HOST_PATHS, HOST_CAPABILITIES } from './resolvers/types';
 import { RESOLVERS } from './resolvers/index';
 import { codexSkillName, transformFrontmatter, extractHookSafetyProse, extractNameAndDescription, condenseOpenAIShortDescription, generateOpenAIYaml } from './resolvers/codex-helpers';
 import { generatePlanCompletionAuditShip, generatePlanCompletionAuditReview, generatePlanVerificationExec } from './resolvers/review';
@@ -152,9 +152,8 @@ function generateSnapshotFlags(_ctx: TemplateContext): string {
 }
 
 function generatePreambleBash(ctx: TemplateContext): string {
-  // For codex/opencode hosts, set up runtime root override
-  const needsRuntimeRoot = ctx.host === 'codex' || ctx.host === 'opencode';
-  const runtimeRoot = needsRuntimeRoot
+  const caps = HOST_CAPABILITIES[ctx.host];
+  const runtimeRoot = caps.usesRuntimeRoot
     ? `_ROOT=$(git rev-parse --show-toplevel 2>/dev/null)
 GSTACK_ROOT="${ctx.paths.skillRoot.replace(/^~/, '$HOME')}"
 [ -n "$_ROOT" ] && [ -d "$_ROOT/${ctx.paths.localSkillRoot}" ] && GSTACK_ROOT="$_ROOT/${ctx.paths.localSkillRoot}"
@@ -896,9 +895,9 @@ Minimum 0 per category.
 
 function generateDesignReviewLite(ctx: TemplateContext): string {
   const litmusList = OPENAI_LITMUS_CHECKS.map((item, i) => `${i + 1}. ${item}`).join(' ');
-  const rejectionList = OPENAI_HARD_REJECTIONS.map((item, i) => `${i + 1}. ${item}`).join(' ');
-  // Codex block only for Claude host
-  const codexBlock = ctx.host === 'codex' ? '' : `
+  const rejectionList = OPENAI_HARD_REJECTIONS.map((item, i) => `${i + 1}. ${item}`).join('\n');
+  const caps = HOST_CAPABILITIES[ctx.host];
+  const codexBlock = !caps.includesCodexCliBlock ? '' : `
 
 7. **Codex design voice** (optional, automatic if available):
 
@@ -2132,8 +2131,8 @@ Error handling: all non-blocking. On failure, skip and continue.`;
 }
 
 function generateCodexSecondOpinion(ctx: TemplateContext): string {
-  // Codex host: strip entirely — Codex should never invoke itself
-  if (ctx.host === 'codex') return '';
+  const caps = HOST_CAPABILITIES[ctx.host];
+  if (!caps.includesCodexCliBlock) return '';
 
   return `## Phase 3.5: Cross-Model Second Opinion (optional)
 
@@ -2219,8 +2218,8 @@ If A: revise the premise and note the revision. If B: proceed (and note that the
 }
 
 function generateAdversarialStep(ctx: TemplateContext): string {
-  // Codex host: strip entirely — Codex should never invoke itself
-  if (ctx.host === 'codex') return '';
+  const caps = HOST_CAPABILITIES[ctx.host];
+  if (!caps.includesCodexCliBlock) return '';
 
   const isShip = ctx.skillName === 'ship';
   const stepNum = isShip ? '3.8' : '5.7';
@@ -2363,8 +2362,8 @@ High-confidence findings (agreed on by multiple sources) should be prioritized f
 }
 
 function generateCodexPlanReview(ctx: TemplateContext): string {
-  // Codex host: strip entirely — Codex should never invoke itself
-  if (ctx.host === 'codex') return '';
+  const caps = HOST_CAPABILITIES[ctx.host];
+  if (!caps.includesCodexCliBlock) return '';
 
   return `## Outside Voice — Independent Plan Challenge (optional, recommended)
 
@@ -2525,8 +2524,8 @@ If you want to persist deploy settings for future runs, suggest the user run \`/
 // ─── Design Outside Voices (parallel Codex + Claude subagent) ───────
 
 function generateDesignOutsideVoices(ctx: TemplateContext): string {
-  // Codex host: strip entirely — Codex should never invoke itself
-  if (ctx.host === 'codex') return '';
+  const caps = HOST_CAPABILITIES[ctx.host];
+  if (!caps.includesCodexCliBlock) return '';
 
   const rejectionList = OPENAI_HARD_REJECTIONS.map((item, i) => `${i + 1}. ${item}`).join('\n');
   const litmusList = OPENAI_LITMUS_CHECKS.map((item, i) => `${i + 1}. ${item}`).join('\n');
@@ -2883,8 +2882,9 @@ policy:
  * Strips allowed-tools, hooks, version, and all other fields.
  * Handles multiline block scalar descriptions (YAML | syntax).
  */
-function transformFrontmatter(content: string, host: Host): string {
-  if (host === 'claude') return content;
+function transformFrontmatter(content: string, host: Host, displayName: string): string {
+  const caps = HOST_CAPABILITIES[host];
+  if (!caps.generatesOpenAIYaml) return content;
 
   const fmStart = content.indexOf('---\n');
   if (fmStart !== 0) return content;
@@ -2893,11 +2893,10 @@ function transformFrontmatter(content: string, host: Host): string {
   const body = content.slice(fmEnd + 4);
   const { name, description } = extractNameAndDescription(content);
 
-  const hostName = host === 'codex' ? 'Codex' : 'OpenCode';
   const MAX_DESC = 1024;
   if (description.length > MAX_DESC) {
     throw new Error(
-      `${hostName} description for "${name}" is ${description.length} chars (max ${MAX_DESC}). ` +
+      `${displayName} description for "${name}" is ${description.length} chars (max ${MAX_DESC}). ` +
       `Compress the description in the .tmpl file.`
     );
   }
@@ -2951,12 +2950,12 @@ function processTemplate(tmplPath: string, host: Host = 'claude'): { outputPath:
   const skillDir = path.relative(ROOT, path.dirname(tmplPath));
 
   let outputDir: string | null = null;
+  const caps = HOST_CAPABILITIES[host];
 
   // For non-Claude hosts, route output to appropriate directory
-  if (host === 'codex' || host === 'opencode') {
+  if (caps.prefixesSkillName) {
     const skillName = codexSkillName(skillDir === '.' ? '' : skillDir);
-    const hostDir = host === 'codex' ? '.agents' : '.opencode';
-    outputDir = path.join(ROOT, hostDir, 'skills', skillName);
+    outputDir = path.join(ROOT, caps.skillDir.root, skillName);
     fs.mkdirSync(outputDir, { recursive: true });
     outputPath = path.join(outputDir, 'SKILL.md');
   }
@@ -2991,10 +2990,10 @@ function processTemplate(tmplPath: string, host: Host = 'claude'): { outputPath:
   }
 
   // For non-Claude hosts: transform frontmatter and replace Claude-specific paths
-  if (host === 'codex' || host === 'opencode') {
+  if (caps.generatesOpenAIYaml) {
     const safetyProse = extractHookSafetyProse(tmplContent);
 
-    content = transformFrontmatter(content, host);
+    content = transformFrontmatter(content, host, caps.displayName);
 
     if (safetyProse) {
       const bodyStart = content.indexOf('\n---') + 4;
@@ -3004,9 +3003,8 @@ function processTemplate(tmplPath: string, host: Host = 'claude'): { outputPath:
     content = content.replace(/~\/\.claude\/skills\/gstack/g, ctx.paths.skillRoot);
     content = content.replace(/\.claude\/skills\/gstack/g, ctx.paths.localSkillRoot);
 
-    const hostSkillsPath = host === 'opencode' ? '.opencode/skills/gstack' : '.agents/skills/gstack';
-    content = content.replace(/\.claude\/skills\/review/g, `${hostSkillsPath}/review`);
-    content = content.replace(/\.claude\/skills/g, host === 'opencode' ? '.opencode/skills' : '.agents/skills');
+    content = content.replace(/\.claude\/skills\/review/g, `${caps.skillDir.gstackPath}/review`);
+    content = content.replace(/\.claude\/skills/g, caps.skillDir.root);
 
     if (outputDir) {
       const skillName = codexSkillName(skillDir === '.' ? '' : skillDir);

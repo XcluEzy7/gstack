@@ -1,4 +1,5 @@
 import type { TemplateContext } from './types';
+import { HOST_CAPABILITIES } from './types';
 
 export function generateReviewDashboard(_ctx: TemplateContext): string {
   return `## Review Readiness Dashboard
@@ -239,7 +240,8 @@ If none was produced (user may have cancelled), proceed with standard review.`;
 }
 
 export function generateCodexSecondOpinion(ctx: TemplateContext): string {
-  if (ctx.host === 'codex' || ctx.host === 'opencode') return '';
+  const caps = HOST_CAPABILITIES[ctx.host];
+  if (!caps.includesCodexCliBlock) return '';
 
   return `## Phase 3.5: Cross-Model Second Opinion (optional)
 
@@ -325,7 +327,8 @@ If A: revise the premise and note the revision. If B: proceed (and note that the
 }
 
 export function generateAdversarialStep(ctx: TemplateContext): string {
-  if (ctx.host === 'codex' || ctx.host === 'opencode') return '';
+  const caps = HOST_CAPABILITIES[ctx.host];
+  if (!caps.includesCodexCliBlock) return '';
 
   const isShip = ctx.skillName === 'ship';
   const stepNum = isShip ? '3.8' : '5.7';
@@ -468,7 +471,8 @@ High-confidence findings (agreed on by multiple sources) should be prioritized f
 }
 
 export function generateCodexPlanReview(ctx: TemplateContext): string {
-  if (ctx.host === 'codex' || ctx.host === 'opencode') return '';
+  const caps = HOST_CAPABILITIES[ctx.host];
+  if (!caps.includesCodexCliBlock) return '';
 
   return `## Outside Voice — Independent Plan Challenge (optional, recommended)
 
