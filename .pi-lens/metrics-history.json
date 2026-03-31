@@ -163,7 +163,49 @@
         }
       ],
       "trend": "stable"
+    },
+    ".gsd/extensions/gsd-shape/prompt.ts": {
+      "latest": {
+        "commit": "unknown",
+        "timestamp": "2026-03-31T13:26:53.194Z",
+        "mi": 28.3,
+        "cognitive": 25,
+        "nesting": 2,
+        "lines": 158
+      },
+      "history": [
+        {
+          "commit": "unknown",
+          "timestamp": "2026-03-31T13:26:53.194Z",
+          "mi": 28.3,
+          "cognitive": 25,
+          "nesting": 2,
+          "lines": 158
+        }
+      ],
+      "trend": "stable"
+    },
+    "test/gsd-shape-prompt.test.ts": {
+      "latest": {
+        "commit": "unknown",
+        "timestamp": "2026-03-31T13:27:36.958Z",
+        "mi": 23.6,
+        "cognitive": 0,
+        "nesting": 3,
+        "lines": 235
+      },
+      "history": [
+        {
+          "commit": "unknown",
+          "timestamp": "2026-03-31T13:27:36.958Z",
+          "mi": 23.6,
+          "cognitive": 0,
+          "nesting": 3,
+          "lines": 235
+        }
+      ],
+      "trend": "stable"
     }
   },
-  "capturedAt": "2026-03-31T13:25:54.732Z"
+  "capturedAt": "2026-03-31T13:27:41.957Z"
 }
