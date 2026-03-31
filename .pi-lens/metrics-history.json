@@ -3,12 +3,12 @@
   "files": {
     ".gsd/extensions/gsd-shape/index.ts": {
       "latest": {
-        "commit": "45ba0cd",
-        "timestamp": "2026-03-30T13:52:56.378Z",
-        "mi": 65.6,
+        "commit": "unknown",
+        "timestamp": "2026-03-31T13:16:07.892Z",
+        "mi": 51.7,
         "cognitive": 0,
         "nesting": 1,
-        "lines": 17
+        "lines": 31
       },
       "history": [
         {
@@ -18,9 +18,17 @@
           "cognitive": 0,
           "nesting": 1,
           "lines": 17
+        },
+        {
+          "commit": "unknown",
+          "timestamp": "2026-03-31T13:16:07.892Z",
+          "mi": 51.7,
+          "cognitive": 0,
+          "nesting": 1,
+          "lines": 31
         }
       ],
-      "trend": "stable"
+      "trend": "regressing"
     },
     ".gsd/extensions/gsd-shape/context.ts": {
       "latest": {
@@ -84,7 +92,49 @@
         }
       ],
       "trend": "stable"
+    },
+    ".gsd/extensions/gsd-shape/writeback.ts": {
+      "latest": {
+        "commit": "unknown",
+        "timestamp": "2026-03-31T13:17:04.272Z",
+        "mi": 31,
+        "cognitive": 112,
+        "nesting": 4,
+        "lines": 232
+      },
+      "history": [
+        {
+          "commit": "unknown",
+          "timestamp": "2026-03-31T13:17:04.272Z",
+          "mi": 31,
+          "cognitive": 112,
+          "nesting": 4,
+          "lines": 232
+        }
+      ],
+      "trend": "stable"
+    },
+    "test/gsd-shape-writeback.test.ts": {
+      "latest": {
+        "commit": "unknown",
+        "timestamp": "2026-03-31T13:17:15.818Z",
+        "mi": 12.6,
+        "cognitive": 2,
+        "nesting": 3,
+        "lines": 547
+      },
+      "history": [
+        {
+          "commit": "unknown",
+          "timestamp": "2026-03-31T13:17:15.818Z",
+          "mi": 12.6,
+          "cognitive": 2,
+          "nesting": 3,
+          "lines": 547
+        }
+      ],
+      "trend": "stable"
     }
   },
-  "capturedAt": "2026-03-31T13:14:46.830Z"
+  "capturedAt": "2026-03-31T13:17:20.819Z"
 }
