@@ -54,9 +54,16 @@ Open Claude Code and paste this. Claude does the rest.
 
 Real files get committed to your repo (not a submodule), so `git clone` just works. Everything lives inside `.claude/`. Nothing touches your PATH or runs in the background.
 
-### Codex, Gemini CLI, or Cursor
+### Codex, OpenCode, Gemini CLI, or Cursor
 
 gstack works on any agent that supports the [SKILL.md standard](https://github.com/anthropics/claude-code). Skills live in `.agents/skills/` and are discovered automatically.
+
+**Supported hosts:**
+- **Claude Code** — Full support with MCP tools for browser automation
+- **OpenAI Codex CLI** — Full support with OpenAI YAML frontmatter
+- **OpenCode** — Full support with OpenAI YAML frontmatter
+- **Gemini CLI** — Basic support (SKILL.md standard)
+- **Cursor** — Basic support (SKILL.md standard)
 
 Install to one repo:
 
@@ -65,18 +72,16 @@ git clone https://github.com/garrytan/gstack.git .agents/skills/gstack
 cd .agents/skills/gstack && ./setup --host codex
 ```
 
-When setup runs from `.agents/skills/gstack`, it installs the generated Codex skills next to it in the same repo and does not write to `~/.codex/skills`.
+When setup runs from `.agents/skills/gstack`, it installs the generated skills next to it in the same repo and does not write to user-global skill directories.
 
 Install once for your user account:
 
 ```bash
 git clone https://github.com/garrytan/gstack.git ~/gstack
-cd ~/gstack && ./setup --host codex
+cd ~/gstack && ./setup --host codex   # or --host opencode
 ```
 
-`setup --host codex` creates the runtime root at `~/.codex/skills/gstack` and
-links the generated Codex skills at the top level. This avoids duplicate skill
-discovery from the source repo checkout.
+`setup --host codex` creates the runtime root at `~/.codex/skills/gstack` and links the generated Codex skills at the top level. This avoids duplicate skill discovery from the source repo checkout.
 
 Or let setup auto-detect which agents you have installed:
 
@@ -85,7 +90,17 @@ git clone https://github.com/garrytan/gstack.git ~/gstack
 cd ~/gstack && ./setup --host auto
 ```
 
-For Codex-compatible hosts, setup now supports both repo-local installs from `.agents/skills/gstack` and user-global installs from `~/.codex/skills/gstack`. All 28 skills work across all supported agents. Hook-based safety skills (careful, freeze, guard) use inline safety advisory prose on non-Claude hosts.
+**HostCapabilities contract:** All 28 skills work across all supported agents via a contract-driven architecture. Each skill's behavior is resolved at generation time based on host capabilities:
+
+| Capability | Claude | Codex | OpenCode |
+|------------|--------|-------|----------|
+| MCP browser tools | ✅ | ❌ | ❌ |
+| OpenAI YAML frontmatter | ❌ | ✅ | ✅ |
+| Codex CLI integration | ✅ | ❌ | ✅ |
+| Runtime root for skills | ❌ | ✅ | ✅ |
+| Skill name prefixes | ❌ | ✅ | ✅ |
+
+Hook-based safety skills (careful, freeze, guard) use inline safety advisory prose on non-Claude hosts where MCP hooks aren't available.
 
 ## See it work
 

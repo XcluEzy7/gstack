@@ -6,7 +6,7 @@ export function generateDesignReviewLite(ctx: TemplateContext): string {
   const litmusList = OPENAI_LITMUS_CHECKS.map((item, i) => `${i + 1}. ${item}`).join(' ');
   const rejectionList = OPENAI_HARD_REJECTIONS.map((item, i) => `${i + 1}. ${item}`).join('\n');
   const caps = HOST_CAPABILITIES[ctx.host];
-  const codexBlock = caps.includesCodexCliBlock ? '' : `
+  const codexBlock = !caps.includesCodexCliBlock ? '' : `
 
 7. **Codex design voice** (optional, automatic if available):
 

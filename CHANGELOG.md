@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.11.19.0] - 2026-03-31 — OpenCode Support + HostCapabilities Contract
+
+### Added
+
+- **OpenCode is now a supported host.** gstack works with [OpenCode](https://github.com/opencode-ai/opencode) alongside Claude Code and Codex CLI. All 28 skills generate correctly with OpenAI YAML frontmatter and proper runtime root handling.
+
+- **HostCapabilities contract.** A new type-driven architecture replaces scattered `host === 'codeX'` conditionals with a declarative capability contract. Each host defines its capabilities (usesRuntimeRoot, generatesOpenAIYaml, includesCodexCliBlock, etc.) and skill templates resolve behavior at generation time. Cleaner, more maintainable, and extensible to new hosts.
+
+### Changed
+
+- **Host-specific skill generation is now contract-driven.** The `scripts/resolvers/types.ts` file defines `HostCapabilities` and `HOST_CAPABILITIES` mappings. All skill resolvers (preamble, design, review, codex-helpers) use capability lookups instead of inline conditionals.
+
+### Fixed
+
+- **Logic inversion in design resolver.** The `includesCodexCliBlock` check was inverted in `scripts/resolvers/design.ts` — fixed to match the correct pattern.
+
 ## [0.11.18.2] - 2026-03-24
 
 ### Fixed
